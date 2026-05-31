@@ -831,6 +831,32 @@
                             </div>
                         </div>
 
+                        <!-- Expenses Section -->
+                        <div class="expenses-section" style="border-top: 1px solid var(--border-glass); padding-top: 1rem; margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.9rem; color: var(--warning); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                                <i class='bx bx-receipt'></i> Gastos de la Reparación
+                            </h4>
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" id="expense-desc" placeholder="Descripción del gasto"
+                                    style="flex: 2; padding: 8px; background: var(--bg-surface); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-main); font-size: 0.8rem;">
+                                <input type="number" id="expense-amount" placeholder="$ Costo"
+                                    style="flex: 1; padding: 8px; background: var(--bg-surface); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-main); font-size: 0.8rem;">
+                                <button id="add-expense-btn" class="secondary-btn" title="Agregar Gasto"
+                                    style="padding: 0 0.8rem; font-size: 0.8rem;">
+                                    <i class='bx bx-plus'></i>
+                                </button>
+                            </div>
+                            <div id="expenses-list" style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;">
+                                <!-- Dynamic expense items -->
+                            </div>
+                            <div id="expenses-total" style="font-size: 0.85rem; color: var(--danger); text-align: right; font-weight: 600;">
+                                Gastos: $0
+                            </div>
+                            <div id="net-profit-display" style="font-size: 0.85rem; color: var(--success); text-align: right; font-weight: 600;">
+                                Ganancia Neta: $0
+                            </div>
+                        </div>
+
                         <div class="payment-methods">
                             <label>Método de Pago</label>
                             <div class="method-options">
@@ -865,6 +891,10 @@
                             <p>Administra tu base de datos de clientes y talleres.</p>
                         </div>
                     </div>
+                    <div class="search-box">
+                        <i class='bx bx-search'></i>
+                        <input type="text" id="clients-search" placeholder="Buscar por nombre, teléfono, dirección...">
+                    </div>
                     <div class="header-actions">
                         <button class="primary-btn quick-sale-btn"><i class='bx bx-plus'></i> Venta Rápida</button>
                         <button class="secondary-btn" id="add-client-btn"><i class='bx bx-user-plus'></i> Nuevo
@@ -884,11 +914,118 @@
                                     <th>DNI / CUIT</th>
                                     <th>Teléfono</th>
                                     <th>Email</th>
+                                    <th>Dirección</th>
+                                    <th>Técnico Asignado</th>
+                                    <th>Garantía</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Dynamic Clients Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Client Detail View (Ficha Técnica) -->
+            <section id="client-detail-view" style="display: none;">
+                <header>
+                    <div class="mobile-menu-toggle" id="menu-open-client-detail">
+                        <i class='bx bx-menu'></i>
+                    </div>
+                    <div class="header-title" style="display: flex; align-items: center; gap: 15px;">
+                        <img src="logo de csr.png" class="branded-logo header-logo">
+                        <div>
+                            <h1 id="client-detail-title">Ficha Técnica del Cliente</h1>
+                            <p id="client-detail-subtitle">Historial y detalle completo</p>
+                        </div>
+                    </div>
+                    <button class="secondary-btn" onclick="switchView('Clientes')" style="margin-left: auto;">
+                        <i class='bx bx-arrow-back'></i> Volver
+                    </button>
+                </header>
+
+                <!-- Client Info Card -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h3><i class='bx bx-user'></i> Datos del Cliente</h3>
+                    </div>
+                    <div id="client-detail-info" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; padding: 0.5rem 0;">
+                        <!-- Dynamic client info -->
+                    </div>
+                </div>
+
+                <!-- Warranty Status -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h3><i class='bx bx-shield-quarter'></i> Estado de Garantía</h3>
+                    </div>
+                    <div id="client-detail-warranty" style="padding: 0.5rem 0; text-align: center;">
+                        <!-- Dynamic warranty status -->
+                    </div>
+                </div>
+
+                <!-- Sales History -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h3><i class='bx bx-cart'></i> Historial de Ventas</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Método</th>
+                                    <th>Artículos</th>
+                                    <th>Gastos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="client-detail-sales">
+                                <tr><td colspan="5" style="text-align:center; padding:1rem; color:var(--text-muted);">Sin ventas registradas</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Repairs History -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h3><i class='bx bx-wrench'></i> Historial de Reparaciones</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Equipo</th>
+                                    <th>Estado</th>
+                                    <th>Presupuesto</th>
+                                </tr>
+                            </thead>
+                            <tbody id="client-detail-repairs">
+                                <tr><td colspan="3" style="text-align:center; padding:1rem; color:var(--text-muted);">Sin reparaciones registradas</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Turnos History -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h3><i class='bx bx-calendar'></i> Historial de Turnos</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Servicio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="client-detail-turnos">
+                                <tr><td colspan="3" style="text-align:center; padding:1rem; color:var(--text-muted);">Sin turnos registrados</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -943,6 +1080,24 @@
                             <h2 id="report-avg-sale">$0</h2>
                         </div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-icon products">
+                            <i class='bx bx-receipt'></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Total Gastos</h3>
+                            <h2 id="report-total-expenses" style="color: var(--danger);">$0</h2>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orders">
+                            <i class='bx bx-dollar-circle'></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Ganancia Neta</h3>
+                            <h2 id="report-net-profit" style="color: var(--success);">$0</h2>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -959,6 +1114,8 @@
                                     <th>Artículos</th>
                                     <th>Método</th>
                                     <th>Total</th>
+                                    <th>Gastos</th>
+                                    <th>Ganancia Neta</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -1155,6 +1312,22 @@
                         <label for="c-email">Email</label>
                         <input type="email" id="c-email" placeholder="cliente@correo.com">
                     </div>
+                    <div class="form-group">
+                        <label for="c-address">Dirección</label>
+                        <input type="text" id="c-address" placeholder="Calle y número, localidad">
+                    </div>
+                    <div class="form-group">
+                        <label for="c-tech">Técnico Asignado</label>
+                        <input type="text" id="c-tech" placeholder="Nombre del técnico">
+                    </div>
+                    <div class="form-group">
+                        <label for="c-work-done">Trabajo Realizado</label>
+                        <input type="text" id="c-work-done" placeholder="Ej: Reparación de compresor">
+                    </div>
+                    <div class="form-group">
+                        <label for="c-warranty">Vencimiento de Garantía</label>
+                        <input type="date" id="c-warranty">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="secondary-btn close-client-modal">Cancelar</button>
@@ -1190,7 +1363,7 @@
         </div>
     </div>
 
-    <div id="employee-sales-modal" class="modal">
+            <div id="employee-sales-modal" class="modal">
         <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
                 <h2 id="employee-sales-modal-title">Ventas del Empleado</h2>
@@ -1204,6 +1377,7 @@
                             <th>Cliente</th>
                             <th>Artículos</th>
                             <th>Total</th>
+                            <th>Gastos</th>
                             <th>Comisión</th>
                         </tr>
                     </thead>
@@ -1234,6 +1408,16 @@
                     <h2 id="daily-total-sales" style="font-size: 2.5rem; color: var(--primary);">$0</h2>
                     <span id="daily-sales-count-label" style="font-size: 0.9rem; color: var(--text-muted);"><span
                             id="daily-sales-count">0</span> transacciones</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1rem; border-radius: 12px; text-align: center;">
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 5px; font-size: 0.85rem;">Total Gastos</span>
+                        <h3 id="daily-total-expenses" style="color: var(--danger);">$0</h3>
+                    </div>
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1rem; border-radius: 12px; text-align: center;">
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 5px; font-size: 0.85rem;">Ganancia Neta</span>
+                        <h3 id="daily-net-profit" style="color: var(--success);">$0</h3>
+                    </div>
                 </div>
 
                 <div class="methods-breakdown">
